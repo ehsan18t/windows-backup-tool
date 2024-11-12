@@ -9,28 +9,38 @@ Add-Type -AssemblyName System.Drawing
 ################
 . "$PSScriptRoot\modules\gui.ps1"
 . "$PSScriptRoot\modules\tasks.ps1"
+. "$PSScriptRoot\modules\constants.ps1"
+
+#############################
+# Initialize Some Constants #
+#############################
+$checkboxPanelLocation = New-Object System.Drawing.Point($checkboxPanelX, $checkboxPanelY)
+$outputBoxLocation = New-Object System.Drawing.Point($outputBoxX, $outputBoxY)
+$btnRestoreLocation = New-Object System.Drawing.Point($btnRestoreX, $btnRestoreY)
+$btnBackupLocation = New-Object System.Drawing.Point($btnBackupX, $btnBackupY)
+$btnShowLogsLocation = New-Object System.Drawing.Point($btnShowLogsX, $btnShowLogsY)
 
 ################################
 # Initialize Form and Controls #
 ################################
-$form = Create-MainForm
-$checkboxPanel = Create-CheckboxPanel
-$btnShowLogs = Create-Button -location (New-Object System.Drawing.Point(140, 210)) -text "Show Logs" -width 100
-$btnBackup = Create-Button -location (New-Object System.Drawing.Point(20, 210)) -text "Backup Now"
-$btnRestore = Create-Button -location (New-Object System.Drawing.Point(240, 210)) -text "Restore Now"
-$outputTextBox = Create-OutputBox -location (New-Object System.Drawing.Point(20, 260))
+$form = Create-MainForm -title $title -width $initialWidth -height $initialHeight -fontSize $initialFontSize
+$checkboxPanel = Create-CheckboxPanel -location $checkboxPanelLocation -width $checkboxPanelWidth -height $checkboxPanelHeight
+$btnShowLogs = Create-Button -location $btnShowLogsLocation -text $btnShowLogsText -width $btnShowLogsWidth
+$btnBackup = Create-Button -location $btnBackupLocation -text $btnBackupText -width $btnBackupWidth
+$btnRestore = Create-Button -location $btnRestoreLocation -text $btnRestoreText -width $btnRestoreWidth
+$outputTextBox = Create-OutputBox -location $outputBoxLocation -width $outputBoxWidth -height $outputBoxHeight
 
 ##########################################################
 # Create Checkboxes dynamically based on the tasks array #
 ##########################################################
 $checkboxes = @()
-$yPos = 10
+$yPos = $checkboxStartY
 foreach ($task in $tasks) {
     if (-not $task.Visible) { continue }
-    $checkbox = Create-Checkbox -text $task.Text -location (New-Object System.Drawing.Point(10, $yPos))
+    $checkbox = Create-Checkbox -text $task.Text -location (New-Object System.Drawing.Point($checkboxStartX, $yPos))
     $checkboxPanel.Controls.Add($checkbox)
     $checkboxes += [PSCustomObject]@{ Checkbox = $checkbox; Backup = $task.BackupAction; Restore = $task.RestoreAction }
-    $yPos += 30
+    $yPos += $checkboxGap
 }
 
 ########################
@@ -48,12 +58,12 @@ $form.Controls.Add($outputTextBox)
 $btnShowLogs.Add_Click({
     if ($outputTextBox.Visible) {
         $outputTextBox.Visible = $false
-        $form.Height = 300  # Shrink the form
-        $showLogsButton.Text = "Show Logs"
+        $form.Height = $initialHeight
+        $btnShowLogs.Text = $btnShowLogsText
     } else {
         $outputTextBox.Visible = $true
-        $form.Height = 420
-        $showLogsButton.Text = "Hide Logs"
+        $form.Height = $heightWithLogs
+        $btnShowLogs.Text = $btnHideLogsText
     }
 })
 

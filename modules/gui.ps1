@@ -1,22 +1,21 @@
 # Function to create the main form
-function Create-MainForm {
+function Create-MainForm ($title, $width, $height, $fontSize) {
     $form = New-Object System.Windows.Forms.Form
-    $form.Text = "Windows Backup Tool"
-    $form.Size = New-Object System.Drawing.Size(400, 300)
+    $form.Text = $title
+    $form.Size = New-Object System.Drawing.Size($width, $height)
     $form.StartPosition = "CenterScreen"
-    $form.Font = New-Object System.Drawing.Font("Segoe UI", 10)
+    $form.Font = New-Object System.Drawing.Font("Segoe UI", $fontSize, [System.Drawing.FontStyle]::Regular)
     $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedDialog
-    $form.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
     $form.BackColor = [System.Drawing.SystemColors]::ControlLightLight
 
     return $form
 }
 
 # Function to create a panel for checkboxes
-function Create-CheckboxPanel {
+function Create-CheckboxPanel ($location, $width, $height) {
     $panel = New-Object System.Windows.Forms.Panel
-    $panel.Size = New-Object System.Drawing.Size(360, 180)
-    $panel.Location = New-Object System.Drawing.Point(10, 10)
+    $panel.Size = New-Object System.Drawing.Size($width, $height)
+    $panel.Location = $location
     $panel.AutoScroll = $true
     $panel.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
 
@@ -37,7 +36,7 @@ function Create-Checkbox ($text, $location) {
 
 
 # Function to create a button
-function Create-Button ($location, $text = "Run", $width = 120, $height = 35, $fontSize = 10) {
+function Create-Button ($location, $text, $width, $height = 35, $fontSize = 10) {
     $button = New-Object System.Windows.Forms.Button
     $button.Text = $text
     $button.Size = New-Object System.Drawing.Size($width, $height)
@@ -52,14 +51,13 @@ function Create-Button ($location, $text = "Run", $width = 120, $height = 35, $f
 
 
 # Function to create an output textbox
-function Create-OutputBox ($location) {
+function Create-OutputBox ($location, $width, $height) {
     $textBox = New-Object System.Windows.Forms.TextBox
     $textBox.Multiline = $true
-    $textBox.Size = New-Object System.Drawing.Size(340, 100)
+    $textBox.Size = New-Object System.Drawing.Size($width, $height)
     $textBox.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
     $textBox.BackColor = [System.Drawing.SystemColors]::ControlLightLight
     $textBox.Location = $location
-    $textBox.AutoScroll = $true
     $textBox.ReadOnly = $true
     $textBox.Visible = $false
 
