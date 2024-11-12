@@ -2,7 +2,7 @@
 function Create-MainForm {
     $form = New-Object System.Windows.Forms.Form
     $form.Text = "Windows Backup Tool"
-    $form.Size = New-Object System.Drawing.Size(400, 420)
+    $form.Size = New-Object System.Drawing.Size(400, 300)
     $form.StartPosition = "CenterScreen"
     $form.Font = New-Object System.Drawing.Font("Segoe UI", 10)
     $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedDialog
@@ -61,6 +61,7 @@ function Create-OutputBox ($location) {
     $textBox.Location = $location
     $textBox.AutoScroll = $true
     $textBox.ReadOnly = $true
+    $textBox.Visible = $false
 
     return $textBox
 }

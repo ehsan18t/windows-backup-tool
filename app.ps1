@@ -15,6 +15,7 @@ Add-Type -AssemblyName System.Drawing
 ################################
 $form = Create-MainForm
 $checkboxPanel = Create-CheckboxPanel
+$btnShowLogs = Create-Button -location (New-Object System.Drawing.Point(140, 210)) -text "Show Logs" -width 100
 $btnBackup = Create-Button -location (New-Object System.Drawing.Point(20, 210)) -text "Backup Now"
 $btnRestore = Create-Button -location (New-Object System.Drawing.Point(240, 210)) -text "Restore Now"
 $outputTextBox = Create-OutputBox -location (New-Object System.Drawing.Point(20, 260))
@@ -36,6 +37,7 @@ foreach ($task in $tasks) {
 # Add controls to form #
 ########################
 $form.Controls.Add($checkboxPanel)
+$form.Controls.Add($btnShowLogs)
 $form.Controls.Add($btnBackup)
 $form.Controls.Add($btnRestore)
 $form.Controls.Add($outputTextBox)
@@ -43,18 +45,28 @@ $form.Controls.Add($outputTextBox)
 ######################
 # Add event handlers #
 ######################
+$btnShowLogs.Add_Click({
+    if ($outputTextBox.Visible) {
+        $outputTextBox.Visible = $false
+        $form.Height = 300  # Shrink the form
+        $showLogsButton.Text = "Show Logs"
+    } else {
+        $outputTextBox.Visible = $true
+        $form.Height = 420
+        $showLogsButton.Text = "Hide Logs"
+    }
+})
+
 $btnBackup.Add_Click({
-    $outputTextBox.Clear()  # Clear the output box each time the button is clicked
     foreach ($item in $checkboxes) {
         if ($item.Checkbox.Checked) {
             $result = $item.Backup.Invoke()
-            $outputTextBox.AppendText("$result`n")  # Display output in the text box
+            $outputTextBox.AppendText("$result`n")
         }
     }
 })
 
 $btnRestore.Add_Click({
-    $outputTextBox.Clear()
     foreach ($item in $checkboxes) {
         if ($item.Checkbox.Checked) {
             $result = $item.Restore.Invoke()
