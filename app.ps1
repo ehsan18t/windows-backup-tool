@@ -83,6 +83,7 @@ $tasks = @(
                 "File already exists at $filePath."
             }
         }
+        Visible = $true
     }
 
     [PSCustomObject]@{
@@ -97,21 +98,25 @@ $tasks = @(
                 "File not found at $filePath."
             }
         }
+        Visible = $true
     }
 
     [PSCustomObject]@{
         Text = "Task 1"
         Action = { "Task 1..." }
+        Visible = $true
     }
 
     [PSCustomObject]@{
         Text = "Task 2"
         Action = { "Task 2..." }
+        Visible = $true
     }
 
     [PSCustomObject]@{
         Text = "Task 3"
         Action = { "Task 3..." }
+        Visible = $false
     }
 )
 
@@ -126,6 +131,7 @@ $outputTextBox = Create-OutputBox -location (New-Object System.Drawing.Point(20,
 $checkboxes = @()
 $yPos = 10
 foreach ($task in $tasks) {
+    if (-not $task.Visible) { continue }
     $checkbox = Create-Checkbox -text $task.Text -location (New-Object System.Drawing.Point(10, $yPos))
     $checkboxPanel.Controls.Add($checkbox)
     $checkboxes += [PSCustomObject]@{ Checkbox = $checkbox; Action = $task.Action }
