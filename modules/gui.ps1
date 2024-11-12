@@ -50,16 +50,3 @@ function Create-Button ($location, $text, $width, $height = 35, $fontSize = 10) 
 }
 
 
-# Function to create an output textbox
-function Create-OutputBox ($location, $width, $height) {
-    $textBox = New-Object System.Windows.Forms.TextBox
-    $textBox.Multiline = $true
-    $textBox.Size = New-Object System.Drawing.Size($width, $height)
-    $textBox.BorderStyle = [System.Windows.Forms.BorderStyle]::FixedSingle
-    $textBox.BackColor = [System.Drawing.SystemColors]::ControlLightLight
-    $textBox.Location = $location
-    $textBox.ReadOnly = $true
-    $textBox.Visible = $false
-
-    return $textBox
-}

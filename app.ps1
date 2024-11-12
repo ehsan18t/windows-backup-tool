@@ -10,6 +10,7 @@ Add-Type -AssemblyName System.Drawing
 . "$PSScriptRoot\modules\gui.ps1"
 . "$PSScriptRoot\modules\tasks.ps1"
 . "$PSScriptRoot\modules\constants.ps1"
+. "$PSScriptRoot\modules\Logger.ps1"
 
 #############################
 # Initialize Some Constants #
@@ -28,7 +29,7 @@ $checkboxPanel = Create-CheckboxPanel -location $checkboxPanelLocation -width $c
 $btnShowLogs = Create-Button -location $btnShowLogsLocation -text $btnShowLogsText -width $btnShowLogsWidth
 $btnBackup = Create-Button -location $btnBackupLocation -text $btnBackupText -width $btnBackupWidth
 $btnRestore = Create-Button -location $btnRestoreLocation -text $btnRestoreText -width $btnRestoreWidth
-$outputTextBox = Create-OutputBox -location $outputBoxLocation -width $outputBoxWidth -height $outputBoxHeight
+$logger = [Logger]::new($outputBoxWidth, $outputBoxHeight, $outputBoxLocation)
 
 ##########################################################
 # Create Checkboxes dynamically based on the tasks array #
@@ -50,18 +51,18 @@ $form.Controls.Add($checkboxPanel)
 $form.Controls.Add($btnShowLogs)
 $form.Controls.Add($btnBackup)
 $form.Controls.Add($btnRestore)
-$form.Controls.Add($outputTextBox)
+$form.Controls.Add($logger.console)
 
 ######################
 # Add event handlers #
 ######################
 $btnShowLogs.Add_Click({
-    if ($outputTextBox.Visible) {
-        $outputTextBox.Visible = $false
+    if ($logger.console.Visible) {
+        $logger.console.Visible = $false
         $form.Height = $initialHeight
         $btnShowLogs.Text = $btnShowLogsText
     } else {
-        $outputTextBox.Visible = $true
+        $logger.console.Visible = $true
         $form.Height = $heightWithLogs
         $btnShowLogs.Text = $btnHideLogsText
     }
@@ -71,7 +72,7 @@ $btnBackup.Add_Click({
     foreach ($item in $checkboxes) {
         if ($item.Checkbox.Checked) {
             $result = $item.Backup.Invoke()
-            $outputTextBox.AppendText("$result`n")
+            $logger.info("$result")
         }
     }
 })
@@ -80,7 +81,7 @@ $btnRestore.Add_Click({
     foreach ($item in $checkboxes) {
         if ($item.Checkbox.Checked) {
             $result = $item.Restore.Invoke()
-            $outputTextBox.AppendText("$result`n")
+            $logger.info("$result")
         }
     }
 })
