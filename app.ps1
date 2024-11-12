@@ -16,7 +16,7 @@ Add-Type -AssemblyName System.Drawing
 # Initialize Some Constants #
 #############################
 $checkboxPanelLocation = New-Object System.Drawing.Point($checkboxPanelX, $checkboxPanelY)
-$outputBoxLocation = New-Object System.Drawing.Point($outputBoxX, $outputBoxY)
+$consoleLocation = New-Object System.Drawing.Point($consoleX, $consoleY)
 $btnRestoreLocation = New-Object System.Drawing.Point($btnRestoreX, $btnRestoreY)
 $btnBackupLocation = New-Object System.Drawing.Point($btnBackupX, $btnBackupY)
 $btnShowLogsLocation = New-Object System.Drawing.Point($btnShowLogsX, $btnShowLogsY)
@@ -29,7 +29,7 @@ $checkboxPanel = Create-CheckboxPanel -location $checkboxPanelLocation -width $c
 $btnShowLogs = Create-Button -location $btnShowLogsLocation -text $btnShowLogsText -width $btnShowLogsWidth
 $btnBackup = Create-Button -location $btnBackupLocation -text $btnBackupText -width $btnBackupWidth
 $btnRestore = Create-Button -location $btnRestoreLocation -text $btnRestoreText -width $btnRestoreWidth
-$logger = [Logger]::new($outputBoxWidth, $outputBoxHeight, $outputBoxLocation)
+$logger = [Logger]::new($consoleWidth, $consoleHeight, $consoleLocation)
 
 ##########################################################
 # Create Checkboxes dynamically based on the tasks array #

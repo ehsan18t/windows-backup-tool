@@ -15,10 +15,10 @@ $checkboxStartX = 10
 $checkboxGap = 30
 
 # Output box
-$outputBoxWidth = 340
-$outputBoxHeight = 100
-$outputBoxX = 20
-$outputBoxY = 260
+$consoleWidth = 360
+$consoleHeight = 110
+$consoleX = 10
+$consoleY = 260
 
 # Buttons
 $btnRestoreText = "Restore Now"

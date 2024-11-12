@@ -17,7 +17,7 @@ class Logger {
 
         # Styles
         $this.console.BorderStyle = [System.Windows.Forms.BorderStyle]::None
-        $this.console.BackColor = [System.Drawing.Color]::FromArgb(52, 73, 85)
+        $this.console.BackColor = [System.Drawing.Color]::FromArgb(53, 55, 75)
         $this.console.ForeColor = [System.Drawing.Color]::White
         $this.console.Font = New-Object System.Drawing.Font("Consolas", 10, [System.Drawing.FontStyle]::Regular)  # Monospaced font
 
