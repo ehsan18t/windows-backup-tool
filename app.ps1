@@ -20,7 +20,7 @@ foreach ($task in $tasks) {
     if (-not $task.Visible) { continue }
     $checkbox = Create-Checkbox -text $task.Text -location (New-Object System.Drawing.Point(10, $yPos))
     $checkboxPanel.Controls.Add($checkbox)
-    $checkboxes += [PSCustomObject]@{ Checkbox = $checkbox; Action = $task.Action }
+    $checkboxes += [PSCustomObject]@{ Checkbox = $checkbox; Backup = $task.BackupAction; Restore = $task.RestoreAction }
     $yPos += 30
 }
 
@@ -30,13 +30,22 @@ $form.Controls.Add($btnBackup)
 $form.Controls.Add($btnRestore)
 $form.Controls.Add($outputTextBox)
 
-# Button click event to execute actions for selected checkboxes
 $btnBackup.Add_Click({
     $outputTextBox.Clear()  # Clear the output box each time the button is clicked
     foreach ($item in $checkboxes) {
         if ($item.Checkbox.Checked) {
-            $result = $item.Action.Invoke()
+            $result = $item.Backup.Invoke()
             $outputTextBox.AppendText("$result`n")  # Display output in the text box
+        }
+    }
+})
+
+$btnRestore.Add_Click({
+    $outputTextBox.Clear()
+    foreach ($item in $checkboxes) {
+        if ($item.Checkbox.Checked) {
+            $result = $item.Restore.Invoke()
+            $outputTextBox.AppendText("$result`n")
         }
     }
 })
