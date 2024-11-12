@@ -1,19 +1,27 @@
-# Load Windows Forms Assembly
+###############################
+# Load Windows Forms Assembly #
+###############################
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# Load modules
-. "$PSScriptRoot\gui.ps1"
-. "$PSScriptRoot\tasks.ps1"
+################
+# Load modules #
+################
+. "$PSScriptRoot\modules\gui.ps1"
+. "$PSScriptRoot\modules\tasks.ps1"
 
-# Initialize Form and Controls
+################################
+# Initialize Form and Controls #
+################################
 $form = Create-MainForm
 $checkboxPanel = Create-CheckboxPanel
 $btnBackup = Create-Button -location (New-Object System.Drawing.Point(20, 210)) -text "Backup Now"
 $btnRestore = Create-Button -location (New-Object System.Drawing.Point(240, 210)) -text "Restore Now"
 $outputTextBox = Create-OutputBox -location (New-Object System.Drawing.Point(20, 260))
 
-# Add Checkboxes dynamically based on the tasks array
+##########################################################
+# Create Checkboxes dynamically based on the tasks array #
+##########################################################
 $checkboxes = @()
 $yPos = 10
 foreach ($task in $tasks) {
@@ -24,12 +32,17 @@ foreach ($task in $tasks) {
     $yPos += 30
 }
 
-# Add controls to form
+########################
+# Add controls to form #
+########################
 $form.Controls.Add($checkboxPanel)
 $form.Controls.Add($btnBackup)
 $form.Controls.Add($btnRestore)
 $form.Controls.Add($outputTextBox)
 
+######################
+# Add event handlers #
+######################
 $btnBackup.Add_Click({
     $outputTextBox.Clear()  # Clear the output box each time the button is clicked
     foreach ($item in $checkboxes) {
@@ -50,6 +63,8 @@ $btnRestore.Add_Click({
     }
 })
 
-# Show form
+#############
+# Show form #
+#############
 $form.Add_Shown({ $form.Activate() })
 [void] $form.ShowDialog()
