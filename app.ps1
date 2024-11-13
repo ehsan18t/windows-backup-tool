@@ -1,8 +1,24 @@
-# Env
+#########################
+# Environment Variables #
+#########################
 $baseBackupPath = "$PSScriptRoot\Backup"
 $userProfile = [System.Environment]::GetFolderPath("UserProfile")
 $x64PF = [System.Environment]::GetFolderPath("ProgramFiles")
 $x86PF = [System.Environment]::GetFolderPath("ProgramFilesX86")
+
+########################
+# Enable DPI Awareness #
+########################
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public class DPIHelper {
+    [DllImport("user32.dll")]
+    public static extern bool SetProcessDPIAware();
+}
+"@
+
+[DPIHelper]::SetProcessDPIAware()
 
 ###############################
 # Load Windows Forms Assembly #

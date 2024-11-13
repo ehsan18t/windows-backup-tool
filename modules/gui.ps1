@@ -8,6 +8,9 @@ function Create-MainForm ($title, $width, $height, $fontSize) {
     $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedDialog
     $form.BackColor = [System.Drawing.SystemColors]::ControlLightLight
 
+    # Set AutoScaleMode to handle DPI scaling
+    $form.AutoScaleMode = [System.Windows.Forms.AutoScaleMode]::Dpi
+
     return $form
 }
 
@@ -26,6 +29,7 @@ function Create-CheckboxPanel ($location, $width, $height) {
 function Create-Checkbox ($text, $location) {
     $checkbox = New-Object System.Windows.Forms.CheckBox
     $checkbox.Text = $text
+    $checkbox.UseCompatibleTextRendering = $true
     $checkbox.AutoSize = $true
     $checkbox.Location = $location
     $checkbox.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
@@ -44,6 +48,7 @@ function Create-Button ($location, $text, $width, $height = 35, $fontSize = 10) 
     $button.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
     $button.BackColor = [System.Drawing.Color]::FromArgb(52, 73, 85)
     $button.ForeColor = [System.Drawing.Color]::White
+    $button.UseCompatibleTextRendering = $true
     $button.Font = New-Object System.Drawing.Font("Segoe UI", $fontSize, [System.Drawing.FontStyle]::Bold)
 
     return $button
