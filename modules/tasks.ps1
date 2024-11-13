@@ -7,13 +7,15 @@ $tasks = @(
             isRunning = (Check-Process "qbittorrent")
             backupPath = "$baseBackupPath\qBittorrent"
             executablePath = (Get-InstalledPath "qBittorrent\qbittorrent.exe")
+            localDataPath = "$userProfile\AppData\Local\qBittorrent"
+            roamingDataPath = "$userProfile\AppData\Roaming\qBittorrent"
         }
         BackupAction = {
             param (
                 $constants
             )
 
-            $logger.task($constants.name)
+            $logger.task("Backup $($constants.name)")
 
             if (-not $constants.executablePath) {
                 $logger.error("qBittorrent is not found.")
@@ -30,7 +32,7 @@ $tasks = @(
             if ($response -eq "Yes") {
                 if ($constants.isRunning) {
                     Kill-Process $constants.process
-                    $logger.warning("Stopping qBittorrent...")
+                    $logger.info("Stopping qBittorrent...")
                 }
 
                 if ($alreadyExists) {
@@ -39,8 +41,8 @@ $tasks = @(
                 }
 
                 $logger.info("Creating new backup...")
-                Copy-Item -path "$userProfile\AppData\Local\qBittorrent" -Destination "$($constants.backupPath)\Local" -Recurse -Force
-                Copy-Item -path "$userProfile\AppData\Roaming\qBittorrent" -Destination "$($constants.backupPath)\Roaming" -Recurse -Force
+                Copy-Item -path $constants.localDataPath -Destination "$($constants.backupPath)\Local" -Recurse -Force
+                Copy-Item -path $constants.roamingDataPath -Destination "$($constants.backupPath)\Roaming" -Recurse -Force
                 $logger.success("Backup created successfully.")
 
                 if ($constants.isRunning) {
