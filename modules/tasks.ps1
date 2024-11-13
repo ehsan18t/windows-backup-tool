@@ -146,17 +146,31 @@ $tasks = @(
     }
 
     [PSCustomObject]@{
-        Text = "Task 1"
-        BackupAction = { "Task 1..." }
-        RestoreAction = { "Restore task 1..." }
-        Visible = $true
-    }
+        Text = "Microsoft Edge (Stable)"
+        Constants = @{
+            name = "Microsoft Edge"
+            process = "msedge"
+            isRunning = (Check-Process "msedge")
+            backupPath = "$baseBackupPath\MicrosoftEdge"
+            executablePath = (Get-InstalledPath "Microsoft\Edge\Application\msedge.exe")
+            dataPath = "$localAppData\Microsoft\Edge"
+        }
+        BackupAction = {
+            param (
+                $constants
+            )
 
-    [PSCustomObject]@{
-        Text = "Task 2"
-        BackupAction = { "Task 2..." }
-        RestoreAction = { "Restore task 2..." }
-        Visible = $true
+            Common $constants "Backup" {
+                Copy-Item -path $constants.dataPath -Destination $constants.backupPath -Recurse -Force
+            }
+        }
+        RestoreAction = {
+            param (
+                $constants
+            )
+
+        }
+        Visible = (Check-IfInstalled "Microsoft\Edge\Application\msedge.exe")
     }
 
     [PSCustomObject]@{
