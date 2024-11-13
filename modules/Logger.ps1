@@ -11,15 +11,15 @@ class Logger {
         $this.console.Size = New-Object System.Drawing.Size($width, $height)
         $this.console.Location = $location
         $this.console.ReadOnly = $true
-        $this.console.ScrollBars = [System.Windows.Forms.RichTextBoxScrollBars]::Vertical
+        $this.console.ScrollBars = [System.Windows.Forms.RichTextBoxScrollBars]::Both
         $this.console.Visible = $false
-        $this.console.WordWrap = $true
+        $this.console.WordWrap = $false
 
         # Styles
         $this.console.BorderStyle = [System.Windows.Forms.BorderStyle]::None
         $this.console.BackColor = [System.Drawing.Color]::FromArgb(53, 55, 75)
         $this.console.ForeColor = [System.Drawing.Color]::White
-        $this.console.Font = New-Object System.Drawing.Font("Consolas", 10, [System.Drawing.FontStyle]::Regular)  # Monospaced font
+        $this.console.Font = New-Object System.Drawing.Font("Consolas", 8, [System.Drawing.FontStyle]::Regular)  # Monospaced font
 
         # Text Paddings
         $this.console.SelectionIndent = 10
