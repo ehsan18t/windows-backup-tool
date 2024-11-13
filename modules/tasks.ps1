@@ -52,7 +52,43 @@ $tasks = @(
             }
         }
         RestoreAction = {
-            "Restore action for Create Sample File task..."
+            param (
+                $constants
+            )
+
+            $logger.task("Restore $($constants.name)")
+
+            $response = "Cancel"
+            $response = Show-ChoicePopup -message "Choose a restore method" -title "Options" -choices @(
+                @{ Text = "Override"; Result = "Override"; Color = [System.Drawing.Color]::FromArgb(0, 91, 65) },
+                @{ Text = "Clean"; Result = "Clean"; Color = [System.Drawing.Color]::FromArgb(227,66,52) },
+                @{ Text = "Cancel"; Result = "Cancel"; Color = [System.Drawing.Color]::FromArgb(135,169,107) }
+            )
+
+            if (($response -eq "Cancel") -or (-not $response)) {
+                $logger.warning("Restore operation cancelled.")
+                return
+            }
+
+            if ($constants.isRunning) {
+                Kill-Process $constants.process
+                $logger.info("Stopping qBittorrent...")
+            }
+
+            if ($response -eq "Clean") {
+                $logger.warning("Cleaning qBittorrent Data...")
+                Remove-Item $constants.localDataPath -Recurse -Force
+                Remove-Item $constants.roamingDataPath -Recurse -Force
+            }
+
+            $logger.info("Restoring qBittorrent Data...")
+            Copy-Item -path "$($constants.backupPath)\Local" -Destination $constants.localDataPath -Recurse -Force
+            Copy-Item -path "$($constants.backupPath)\Roaming" -Destination $constants.roamingDataPath -Recurse -Force
+
+            if ($constants.isRunning) {
+                $logger.info("Starting qBittorrent...")
+                Start-Process -FilePath $constants.executablePath
+            }
         }
         Visible = (Check-IfInstalled "qBittorrent\qbittorrent.exe")
     }
