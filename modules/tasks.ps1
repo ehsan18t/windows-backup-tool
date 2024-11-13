@@ -1,46 +1,52 @@
 $tasks = @(
     [PSCustomObject]@{
-        Text = "QBitTorrent"
+        Text = "qBittorrent"
+        Constants = @{
+            name = "qBittorrent"
+            process = "qbittorrent"
+            isRunning = (Check-Process "qbittorrent")
+            backupPath = "$baseBackupPath\qBittorrent"
+            executablePath = (Get-InstalledPath "qBittorrent\qbittorrent.exe")
+        }
         BackupAction = {
-            $process = "qbittorrent"
-            $backupPath = "$baseBackupPath\" + "QBitTorrent"
-            $isRunning = (Check-Process $process)
-            $executablePath = Get-InstalledPath "qBittorrent\qbittorrent.exe"
+            param (
+                $constants
+            )
 
-            $logger.task("qBittorrent")
+            $logger.task($constants.name)
 
-            if (-not $executablePath) {
+            if (-not $constants.executablePath) {
                 $logger.error("qBittorrent is not found.")
                 return
             }
 
-            if ($isRunning) {
-                Kill-Process $process
+            if ($constants.isRunning) {
+                Kill-Process $constants.process
                 $logger.warning("Stopping qBittorrent...")
             }
 
             $response = "Proceed"
-            $alreadyExists = Test-Path $backupPath
+            $alreadyExists = Test-Path $constants.backupPath
             if ($alreadyExists) {
-                $logger.warning("A backup already exists at $backupPath.")
+                $logger.warning("A backup already exists at $($constants.backupPath).")
                 $response = Show-ChoicePopup -choice1 "Proceed" -choice2 "Cancel" -choice1Result "Proceed" -choice2Result "Cancel" -title "Action Required" -message "Do you want to override the old backup?"
             }
 
             if ($response -eq "Proceed") {
                 if ($alreadyExists) {
                     $logger.warning("Deleting old backup...")
-                    Remove-Item $backupPath -Recurse -Force
+                    Remove-Item $constants.backupPath -Recurse -Force
                 }
 
                 $logger.info("Creating backup...")
-                Copy-Item -path "$userProfile\AppData\Local\qBittorrent" -Destination "$backupPath\Local" -Recurse -Force
-                Copy-Item -path "$userProfile\AppData\Roaming\qBittorrent" -Destination "$backupPath\Roaming" -Recurse -Force
+                Copy-Item -path "$userProfile\AppData\Local\qBittorrent" -Destination "$($constants.backupPath)\Local" -Recurse -Force
+                Copy-Item -path "$userProfile\AppData\Roaming\qBittorrent" -Destination "$($constants.backupPath)\Roaming" -Recurse -Force
                 $logger.success("Backup created successfully.")
             }
 
-            if ($isRunning) {
+            if ($constants.isRunning) {
                 $logger.info("Starting qBittorrent...")
-                Start-Process -FilePath $executablePath
+                Start-Process -FilePath $constants.executablePath
             }
         }
         RestoreAction = {

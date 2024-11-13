@@ -62,7 +62,12 @@ foreach ($task in $tasks) {
     if (-not $task.Visible) { continue }
     $checkbox = Create-Checkbox -text $task.Text -location (New-Object System.Drawing.Point($checkboxStartX, $yPos))
     $checkboxPanel.Controls.Add($checkbox)
-    $checkboxes += [PSCustomObject]@{ Checkbox = $checkbox; Backup = $task.BackupAction; Restore = $task.RestoreAction }
+    $checkboxes += [PSCustomObject]@{ 
+            Checkbox = $checkbox
+            Constants = $task.Constants
+            Backup = $task.BackupAction
+            Restore = $task.RestoreAction
+        }
     $yPos += $checkboxGap
 }
 
@@ -93,7 +98,7 @@ $btnShowLogs.Add_Click({
 $btnBackup.Add_Click({
     foreach ($item in $checkboxes) {
         if ($item.Checkbox.Checked) {
-            $item.Backup.Invoke()
+            $item.Backup.Invoke($item.Constants)
         }
     }
 })
@@ -101,7 +106,7 @@ $btnBackup.Add_Click({
 $btnRestore.Add_Click({
     foreach ($item in $checkboxes) {
         if ($item.Checkbox.Checked) {
-            $item.Restore.Invoke()
+            $item.Restore.Invoke($item.Constants)
         }
     }
 })
