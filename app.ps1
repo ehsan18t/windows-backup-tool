@@ -1,5 +1,6 @@
 # Env
 $baseBackupPath = "$PSScriptRoot\Backup"
+$userProfile = [System.Environment]::GetFolderPath("UserProfile")
 $x64PF = [System.Environment]::GetFolderPath("ProgramFiles")
 $x86PF = [System.Environment]::GetFolderPath("ProgramFilesX86")
 
