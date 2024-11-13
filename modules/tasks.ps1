@@ -34,6 +34,8 @@ $tasks = @(
             $isRunning = (Check-Process $process)
             $executablePath = Get-InstalledPath "qBittorrent\qbittorrent.exe"
 
+            $logger.task("qBittorrent")
+
             if (-not $executablePath) {
                 $logger.error("qBittorrent is not found.")
                 return
@@ -44,16 +46,27 @@ $tasks = @(
                 $logger.warning("Stopping qBittorrent...")
             }
 
-            if (Test-Path $backupPath) {
-                $logger.warning("A backup already exists at $backupPath. Skipping...")
-            } else {
+            $response = "Proceed"
+            $alreadyExists = Test-Path $backupPath
+            if ($alreadyExists) {
+                $logger.warning("A backup already exists at $backupPath.")
+                $response = Show-ChoicePopup -choice1 "Proceed" -choice2 "Cancel" -choice1Result "Proceed" -choice2Result "Cancel" -title "Action Required" -message "Do you want to override the old backup?"
+            }
+
+            if ($response -eq "Proceed") {
+                if ($alreadyExists) {
+                    $logger.warning("Deleting old backup...")
+                    Remove-Item $backupPath -Recurse -Force
+                }
+
+                $logger.info("Creating backup...")
                 Copy-Item -path "$userProfile\AppData\Local\qBittorrent" -Destination "$backupPath\Local" -Recurse -Force
                 Copy-Item -path "$userProfile\AppData\Roaming\qBittorrent" -Destination "$backupPath\Roaming" -Recurse -Force
-                $logger.success("Backing up qBittorrent to $backupPath")
+                $logger.success("Backup created successfully.")
             }
 
             if ($isRunning) {
-                $logger.info("Starting $executablePath...")
+                $logger.info("Starting qBittorrent...")
                 Start-Process -FilePath $executablePath
             }
         }

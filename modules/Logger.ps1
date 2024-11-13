@@ -23,7 +23,6 @@ class Logger {
 
         # Text Paddings
         $this.console.SelectionIndent = 10
-        $this.console.AppendText("`n")
     }
 
     # Method to add a general log message (default color)
@@ -33,6 +32,13 @@ class Logger {
         $this.console.SelectedText = $type + ": "
         $this.console.SelectionColor = $this.console.ForeColor  # Reset to default
         $this.console.SelectedText = $message + "`n"
+    }
+
+    [void]task([string]$message) {
+        $this.console.SelectionStart = $this.console.Text.Length
+        $this.console.SelectionColor = [System.Drawing.Color]::Coral
+        $this.console.SelectedText = "`n# $message #`n"
+        $this.console.SelectionColor = $this.console.ForeColor
     }
 
     # Convenience methods for specific log types
@@ -57,6 +63,6 @@ class Logger {
     }
 
     [void]success([string]$message) {
-        $this.Log("Success", $message, [System.Drawing.Color]::Green)
+        $this.Log("Success", $message, [System.Drawing.Color]::Chartreuse)
     }
 }
