@@ -20,11 +20,6 @@ $tasks = @(
                 return
             }
 
-            if ($constants.isRunning) {
-                Kill-Process $constants.process
-                $logger.warning("Stopping qBittorrent...")
-            }
-
             $response = "Proceed"
             $alreadyExists = Test-Path $constants.backupPath
             if ($alreadyExists) {
@@ -33,20 +28,25 @@ $tasks = @(
             }
 
             if ($response -eq "Proceed") {
+                if ($constants.isRunning) {
+                    Kill-Process $constants.process
+                    $logger.warning("Stopping qBittorrent...")
+                }
+
                 if ($alreadyExists) {
                     $logger.warning("Deleting old backup...")
                     Remove-Item $constants.backupPath -Recurse -Force
                 }
 
-                $logger.info("Creating backup...")
+                $logger.info("Creating new backup...")
                 Copy-Item -path "$userProfile\AppData\Local\qBittorrent" -Destination "$($constants.backupPath)\Local" -Recurse -Force
                 Copy-Item -path "$userProfile\AppData\Roaming\qBittorrent" -Destination "$($constants.backupPath)\Roaming" -Recurse -Force
                 $logger.success("Backup created successfully.")
-            }
 
-            if ($constants.isRunning) {
-                $logger.info("Starting qBittorrent...")
-                Start-Process -FilePath $constants.executablePath
+                if ($constants.isRunning) {
+                    $logger.info("Starting qBittorrent...")
+                    Start-Process -FilePath $constants.executablePath
+                }
             }
         }
         RestoreAction = {
