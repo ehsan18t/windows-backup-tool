@@ -1,3 +1,8 @@
+# Env
+$baseBackupPath = "$PSScriptRoot\Backup"
+$x64PF = [System.Environment]::GetFolderPath("ProgramFiles")
+$x86PF = [System.Environment]::GetFolderPath("ProgramFilesX86")
+
 ###############################
 # Load Windows Forms Assembly #
 ###############################
@@ -7,16 +12,15 @@ Add-Type -AssemblyName System.Drawing
 ################
 # Load modules #
 ################
-. "$PSScriptRoot\modules\gui.ps1"
-. "$PSScriptRoot\modules\tasks.ps1"
 . "$PSScriptRoot\modules\constants.ps1"
 . "$PSScriptRoot\modules\Logger.ps1"
+. "$PSScriptRoot\modules\gui.ps1"
+. "$PSScriptRoot\modules\tasks.ps1"
 
 #############################
 # Initialize Some Constants #
 #############################
 $checkboxPanelLocation = New-Object System.Drawing.Point($checkboxPanelX, $checkboxPanelY)
-$consoleLocation = New-Object System.Drawing.Point($consoleX, $consoleY)
 $btnRestoreLocation = New-Object System.Drawing.Point($btnRestoreX, $btnRestoreY)
 $btnBackupLocation = New-Object System.Drawing.Point($btnBackupX, $btnBackupY)
 $btnShowLogsLocation = New-Object System.Drawing.Point($btnShowLogsX, $btnShowLogsY)
@@ -29,7 +33,7 @@ $checkboxPanel = Create-CheckboxPanel -location $checkboxPanelLocation -width $c
 $btnShowLogs = Create-Button -location $btnShowLogsLocation -text $btnShowLogsText -width $btnShowLogsWidth
 $btnBackup = Create-Button -location $btnBackupLocation -text $btnBackupText -width $btnBackupWidth
 $btnRestore = Create-Button -location $btnRestoreLocation -text $btnRestoreText -width $btnRestoreWidth
-$logger = [Logger]::new($consoleWidth, $consoleHeight, $consoleLocation)
+
 
 ##########################################################
 # Create Checkboxes dynamically based on the tasks array #
@@ -71,8 +75,7 @@ $btnShowLogs.Add_Click({
 $btnBackup.Add_Click({
     foreach ($item in $checkboxes) {
         if ($item.Checkbox.Checked) {
-            $result = $item.Backup.Invoke()
-            $logger.info("$result")
+            $item.Backup.Invoke()
         }
     }
 })
@@ -80,8 +83,7 @@ $btnBackup.Add_Click({
 $btnRestore.Add_Click({
     foreach ($item in $checkboxes) {
         if ($item.Checkbox.Checked) {
-            $result = $item.Restore.Invoke()
-            $logger.info("$result")
+            $item.Restore.Invoke()
         }
     }
 })

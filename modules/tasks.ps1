@@ -1,3 +1,6 @@
+$consoleLocation = New-Object System.Drawing.Point($consoleX, $consoleY)
+$logger = [Logger]::new($consoleWidth, $consoleHeight, $consoleLocation)
+
 $tasks = @(
     [PSCustomObject]@{
         Text = "Create Sample File"

@@ -13,7 +13,7 @@ class Logger {
         $this.console.ReadOnly = $true
         $this.console.ScrollBars = [System.Windows.Forms.RichTextBoxScrollBars]::Vertical
         $this.console.Visible = $false
-        $this.console.WordWrap = $false
+        $this.console.WordWrap = $true
 
         # Styles
         $this.console.BorderStyle = [System.Windows.Forms.BorderStyle]::None
