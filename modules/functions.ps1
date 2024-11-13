@@ -1,8 +1,13 @@
-function Check-IfInstalled ($executablePath) {
-    if ((Test-Path "$x64PF\$executablePath") -or (Test-Path "$x86PF\$executablePath")) {
-        return $true
+function Check-IfInstalled ($executablePath, [switch]$exact) {
+    if ($exact) {
+        $file1 = Get-ChildItem -Path $executablePath -File -ErrorAction SilentlyContinue
+        return $file1 -ne $null
     }
-    return $false
+
+    $file1 = Get-ChildItem -Path "$x64PF\$executablePath" -File -ErrorAction SilentlyContinue
+    $file2 = Get-ChildItem -Path "$x86PF\$executablePath" -File -ErrorAction SilentlyContinue
+
+    return ($file1 -ne $null) -or ($file2 -ne $null)
 }
 
 function Get-InstalledPath ($executablePath) {
@@ -22,5 +27,16 @@ function Check-Process ($processName) {
 }
 
 function Kill-Process ($processName) {
+    $logger.info("Stopping $processName...")
     Get-Process -Name $processName | Stop-Process -Force
+}
+
+function Run-Process ($executablePath, $processName) {
+    if (-not $processName) {
+        $processName = (Split-Path -Leaf $executablePath)
+    }
+
+    $logger.info("Starting $processName...")
+
+    Start-Process -FilePath $executablePath
 }
