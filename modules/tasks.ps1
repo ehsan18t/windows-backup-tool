@@ -56,8 +56,8 @@ $tasks = @(
             isRunning = (Check-Process "qbittorrent")
             backupPath = "$baseBackupPath\qBittorrent"
             executablePath = (Get-InstalledPath "qBittorrent\qbittorrent.exe")
-            localDataPath = "$userProfile\AppData\Local\qBittorrent"
-            roamingDataPath = "$userProfile\AppData\Roaming\qBittorrent"
+            localDataPath = "$localAppData\qBittorrent"
+            roamingDataPath = "$roamingAppData\qBittorrent"
         }
         BackupAction = {
             param (
@@ -114,8 +114,8 @@ $tasks = @(
         Constants = @{
             name = "Windows Terminal"
             backupPath = "$baseBackupPath\WindowsTerminal\settings.json"
-            dataPath = "$userProfile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-            executablePath = "$userProfile\AppData\Local\Microsoft\WindowsApps\wt.exe"
+            dataPath = "$localAppData\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+            executablePath = "$localAppData\Microsoft\WindowsApps\wt.exe"
         }
         BackupAction = {
             param (

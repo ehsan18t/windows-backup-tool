@@ -11,6 +11,8 @@ Add-Type -AssemblyName System.Drawing
 
 $baseBackupPath = "$PSScriptRoot\Backup"
 $userProfile = [System.Environment]::GetFolderPath("UserProfile")
+$localAppData = "$userProfile\AppData\Local"
+$roamingAppData = "$userProfile\AppData\Roaming"
 $x64PF = [System.Environment]::GetFolderPath("ProgramFiles")
 $x86PF = [System.Environment]::GetFolderPath("ProgramFilesX86")
 
