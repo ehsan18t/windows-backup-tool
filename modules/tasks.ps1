@@ -110,21 +110,39 @@ $tasks = @(
     }
 
     [PSCustomObject]@{
-        Text = "Delete Sample File"
+        Text = "Windows Terminal"
+        Constants = @{
+            name = "Windows Terminal"
+            backupPath = "$baseBackupPath\WindowsTerminal\settings.json"
+            dataPath = "$userProfile\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+            executablePath = "$userProfile\AppData\Local\Microsoft\WindowsApps\wt.exe"
+        }
         BackupAction = {
-            # Delete the sample file if it exists
-            $filePath = "C:\SampleFile.txt"
-            if (Test-Path $filePath) {
-                Remove-Item $filePath -Force
-                "Deleted file at $filePath"
-            } else {
-                "File not found at $filePath."
+            param (
+                $constants
+            )
+
+            Common $constants "Backup" {
+                Copy-Item $constants.dataPath -Destination $constants.backupPath
             }
         }
         RestoreAction = {
-            "Restore action for Deleted Sample File task..."
+            param (
+                $constants
+            )
+
+            $logger.task("Restore $($constants.name)")
+
+            if (!(Test-Path $constants.backupPath)) {
+                $logger.error("Backup not found.")
+                return
+            }
+
+            Remove-Item $constants.dataPath -Force
+            Copy-Item $constants.backupPath -Destination $constants.dataPath
+            $logger.success("Restored successfully.")
         }
-        Visible = $true
+        Visible = (Check-IfInstalled "$userProfile\AppData\Local\Microsoft\WindowsApps\wt.exe" -exact)
     }
 
     [PSCustomObject]@{
