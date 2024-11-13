@@ -40,14 +40,31 @@ function Create-Checkbox ($text, $location) {
 
 
 # Function to create a button
-function Create-Button ($location, $text, $width, $height = 35, $fontSize = 10) {
+function Create-Button {
+    param (
+        [Parameter(Mandatory=$true)]
+        [System.Drawing.Point]$location,
+
+        [Parameter(Mandatory=$true)]
+        [string]$text,
+
+        [Parameter(Mandatory=$true)]
+        [int]$width,
+
+        [int]$height = 35,
+        [int]$fontSize = 9,
+
+        [System.Drawing.Color]$backColor = [System.Drawing.Color]::FromArgb(52, 73, 85),  # Default color if not provided
+        [System.Drawing.Color]$foreColor = [System.Drawing.Color]::White  # Default color if not provided
+    )
+
     $button = New-Object System.Windows.Forms.Button
     $button.Text = $text
     $button.Size = New-Object System.Drawing.Size($width, $height)
     $button.Location = $location
     $button.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
-    $button.BackColor = [System.Drawing.Color]::FromArgb(52, 73, 85)
-    $button.ForeColor = [System.Drawing.Color]::White
+    $button.BackColor = $backColor
+    $button.ForeColor = $foreColor
     $button.UseCompatibleTextRendering = $true
     $button.Font = New-Object System.Drawing.Font("Segoe UI", $fontSize, [System.Drawing.FontStyle]::Bold)
 
