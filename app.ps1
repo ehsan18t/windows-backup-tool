@@ -32,6 +32,7 @@ public class DPIHelper {
 # Load modules #
 ################
 . "$PSScriptRoot\modules\gui.ps1"
+. "$PSScriptRoot\modules\functions.ps1"
 . "$PSScriptRoot\modules\tasks.ps1"
 
 #############################

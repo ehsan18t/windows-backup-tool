@@ -11,7 +11,6 @@ class Logger {
         $this.console.Size = New-Object System.Drawing.Size($width, $height)
         $this.console.Location = $location
         $this.console.ReadOnly = $true
-        $this.console.ScrollBars = [System.Windows.Forms.RichTextBoxScrollBars]::Both
         $this.console.Visible = $false
         $this.console.WordWrap = $false
 
@@ -37,7 +36,9 @@ class Logger {
     [void]task([string]$message) {
         $this.console.SelectionStart = $this.console.Text.Length
         $this.console.SelectionColor = [System.Drawing.Color]::Coral
-        $this.console.SelectedText = "`n# $message #`n"
+        $this.console.SelectionBackColor = [System.Drawing.Color]::FromArgb(71,35,22)
+        $this.console.SelectedText = "`n # $message # `n"
+        $this.console.SelectionBackColor = $this.console.BackColor
         $this.console.SelectionColor = $this.console.ForeColor
     }
 
