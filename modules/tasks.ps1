@@ -20,14 +20,14 @@ $tasks = @(
                 return
             }
 
-            $response = "Proceed"
+            $response = "Yes"
             $alreadyExists = Test-Path $constants.backupPath
             if ($alreadyExists) {
                 $logger.warning("A backup already exists at $($constants.backupPath).")
-                $response = Show-ChoicePopup -choice1 "Proceed" -choice2 "Cancel" -choice1Result "Proceed" -choice2Result "Cancel" -title "Action Required" -message "Do you want to override the old backup?"
+                $response = Show-ChoicePopup -title "Action Required" -message "Do you want to override the old backup?"
             }
 
-            if ($response -eq "Proceed") {
+            if ($response -eq "Yes") {
                 if ($constants.isRunning) {
                     Kill-Process $constants.process
                     $logger.warning("Stopping qBittorrent...")

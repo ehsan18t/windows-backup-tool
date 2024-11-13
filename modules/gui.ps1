@@ -71,15 +71,15 @@ function Create-Button {
     return $button
 }
 
-# Deps: Create-MainForm, Create-Button
+# Dependencies: Create-MainForm, Create-Button
 function Show-ChoicePopup {
     param (
         [string]$message = "Are you sure?",
         [string]$title = "Confirmation",
-        [string]$choice1 = "Yes",
-        [string]$choice2 = "No",
-        [string]$choice1Result = "Yes",
-        [string]$choice2Result = "No"
+        [Array]$choices = @(
+            @{ Text = "Yes"; Result = "Yes"; Color = [System.Drawing.Color]::FromArgb(227,66,52) },
+            @{ Text = "No"; Result = "No"; Color = [System.Drawing.Color]::FromArgb(135,169,107) }
+        )
     )
 
     # Initialize the popup form
@@ -89,7 +89,7 @@ function Show-ChoicePopup {
     $popupForm.MinimizeBox = $false
     $popupForm.TopMost = $true
 
-    # Label for message
+    # Label for the message
     $label = New-Object System.Windows.Forms.Label
     $label.Text = $message
     $label.Size = New-Object System.Drawing.Size(260, 40)
@@ -98,30 +98,36 @@ function Show-ChoicePopup {
     $label.UseCompatibleTextRendering = $true
     $popupForm.Controls.Add($label)
 
-    # Button 1
-    $button1 = Create-Button -location (New-Object System.Drawing.Point(20, 70)) -text $choice1 -backColor ([System.Drawing.Color]::FromArgb(0, 91, 65)) -width 80 -height 30
-    $button1.DialogResult = [System.Windows.Forms.DialogResult]::OK
-    $popupForm.Controls.Add($button1)
+    # Calculate button layout
+    $buttonWidth = 80
+    $buttonHeight = 30
+    $spacing = 10
+    $startX = [int](($popupForm.ClientSize.Width - (($choices.Count * $buttonWidth) + (($choices.Count - 1) * $spacing))) / 2)
+    $yPosition = 70
 
-    # Button 2
-    $button2 = Create-Button -location (New-Object System.Drawing.Point(180, 70)) -text $choice2 -backColor ([System.Drawing.Color]::FromArgb(190, 49, 68)) -width 80 -height 30
-    $button2.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
-    $popupForm.Controls.Add($button2)
+    # Loop to create buttons dynamically
+    $index = 0
+    foreach ($choice in $choices) {
+        $buttonX = $startX + (($buttonWidth + $spacing) * $index)
+        $button = Create-Button -location (New-Object System.Drawing.Point($buttonX, $yPosition)) `
+                                -text $choice.Text `
+                                -backColor $choice.Color `
+                                -width $buttonWidth `
+                                -height $buttonHeight
+        $button.DialogResult = [System.Windows.Forms.DialogResult]::None
 
-    # Handle button clicks to close the form with respective results
-    $button1.Add_Click({
-        $logger.response($choice1Result)
-        $popupForm.Tag = $choice1Result
-        $popupForm.Close()
-    })
-    $button2.Add_Click({
-        $logger.response($choice2Result)
-        $popupForm.Tag = $choice2Result
-        $popupForm.Close()
-    })
+        $button.Add_Click({
+            $logger.response($choice.Result)
+            $popupForm.Tag = $choice.Result
+            $popupForm.Close()
+        }.GetNewClosure())
 
+        $popupForm.Controls.Add($button)
+        $index++
+    }
+
+    # Show the form and return the result after closing
     $popupForm.ShowDialog() | Out-Null
     return $popupForm.Tag
 }
-
 
