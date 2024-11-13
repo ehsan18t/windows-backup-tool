@@ -40,6 +40,14 @@ class Logger {
         $this.Log("Info", $message, [System.Drawing.Color]::Cyan)
     }
 
+    [void]query([string]$message) {
+        $this.Log("Query", $message, [System.Drawing.Color]::Yellow)
+    }
+
+    [void]response([string]$message) {
+        $this.Log("Response", $message, [System.Drawing.Color]::Aquamarine)
+    }
+
     [void]warning([string]$message) {
         $this.Log("Warning", $message, [System.Drawing.Color]::Orange)
     }

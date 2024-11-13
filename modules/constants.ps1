@@ -1,3 +1,5 @@
+. "$PSScriptRoot\Logger.ps1"
+
 # Form
 $title = "Windows Backup Tool"
 $initialWidth = 400
@@ -14,11 +16,8 @@ $checkboxStartY = 10
 $checkboxStartX = 10
 $checkboxGap = 30
 
-# Output box
-$consoleWidth = 360
-$consoleHeight = 110
-$consoleX = 10
-$consoleY = 260
+# Logger console
+$logger = [Logger]::new(360, 110, (New-Object System.Drawing.Point(10, 260)))
 
 # Buttons
 $btnRestoreText = "Restore Now"

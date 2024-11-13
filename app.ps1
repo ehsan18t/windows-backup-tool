@@ -1,6 +1,14 @@
+###############################
+# Load Windows Forms Assembly #
+###############################
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
 #########################
 # Environment Variables #
 #########################
+. "$PSScriptRoot\modules\constants.ps1"
+
 $baseBackupPath = "$PSScriptRoot\Backup"
 $userProfile = [System.Environment]::GetFolderPath("UserProfile")
 $x64PF = [System.Environment]::GetFolderPath("ProgramFiles")
@@ -20,17 +28,9 @@ public class DPIHelper {
 
 [DPIHelper]::SetProcessDPIAware()
 
-###############################
-# Load Windows Forms Assembly #
-###############################
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.Drawing
-
 ################
 # Load modules #
 ################
-. "$PSScriptRoot\modules\constants.ps1"
-. "$PSScriptRoot\modules\Logger.ps1"
 . "$PSScriptRoot\modules\gui.ps1"
 . "$PSScriptRoot\modules\tasks.ps1"
 

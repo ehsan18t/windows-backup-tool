@@ -1,6 +1,3 @@
-$consoleLocation = New-Object System.Drawing.Point($consoleX, $consoleY)
-$logger = [Logger]::new($consoleWidth, $consoleHeight, $consoleLocation)
-
 function Check-IfInstalled ($executablePath) {
     if ((Test-Path "$x64PF\$executablePath") -or (Test-Path "$x86PF\$executablePath")) {
         return $true
