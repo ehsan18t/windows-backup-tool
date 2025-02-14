@@ -1,3 +1,12 @@
+# --- Load Constants and Configurations ---
+$root = $PSScriptRoot
+$backupPath = "$root\Backup"
+$userProfile = [System.Environment]::GetFolderPath("UserProfile")
+$localAppData = "$userProfile\AppData\Local"
+$roamingAppData = "$userProfile\AppData\Roaming"
+$x64PF = [System.Environment]::GetFolderPath("ProgramFiles")
+$x86PF = [System.Environment]::GetFolderPath("ProgramFilesX86")
+
 # --- Retrieve UI Elements ---
 $global:TaskPanelLeft = $global:window.FindName("TaskPanelLeft")
 $global:TaskPanelRight = $global:window.FindName("TaskPanelRight")
@@ -36,8 +45,22 @@ foreach ($item in $global:config.Items) {
 $global:startButton.Add_Click({
     $global:startButton.IsEnabled = $false
 
-    $selectedTasksLeft = $global:TaskPanelLeft.Children | Where-Object { $_ -is [System.Windows.Controls.CheckBox] -and $_.IsChecked -eq $true }
-    $selectedTasksRight = $global:TaskPanelRight.Children | Where-Object { $_ -is [System.Windows.Controls.CheckBox] -and $_.IsChecked -eq $true }
+    $response = [System.Windows.MessageBoxResult]::No
+    $backExists = Test-Path $backupPath
+    if ($backExists) {
+        $response = Show-ConfirmationPopup -Message "A backup already exists. Do you want to override the old backup?" -Title "Confirm Task Start"
+    }
+
+    if ($response -eq [System.Windows.MessageBoxResult]::Yes) {
+        Remove-Item $backupPath -Recurse -Force
+    } elseif ($backExists -and ($response -eq [System.Windows.MessageBoxResult]::No)) {
+        Log -type "Warning" -message "Backup creation cancelled."
+        $global:startButton.IsEnabled = $true
+        return
+    }
+
+    $selectedTasksLeft = @($global:TaskPanelLeft.Children | Where-Object { $_ -is [System.Windows.Controls.CheckBox] -and $_.IsChecked -eq $true })
+    $selectedTasksRight = @($global:TaskPanelRight.Children | Where-Object { $_ -is [System.Windows.Controls.CheckBox] -and $_.IsChecked -eq $true })
     $selectedTasks = $selectedTasksLeft + $selectedTasksRight
 
     if (-not $selectedTasks) {
@@ -51,7 +74,10 @@ $global:startButton.Add_Click({
         if ($global:TaskFunctions.ContainsKey($taskName)) {
             $taskScript = $global:TaskFunctions[$taskName]
         } else {
-            $taskScript = { param($taskName); Start-Sleep -Seconds 2; return "$taskName default function completed" }
+            $taskScript = {
+                param($taskName);
+                return "$taskName not found!"
+            }
         }
 
         $powershell = [PowerShell]::Create().AddScript($taskScript).AddArgument($taskName)
@@ -72,15 +98,9 @@ $global:startButton.Add_Click({
             if ($job.Handle.IsCompleted -and -not $job.Completed) {
                 try {
                     $result = $job.PowerShell.EndInvoke($job.Handle)
-                    $global:outputBox.Dispatcher.Invoke([Action]{
-                        $global:outputBox.AppendText("$($job.TaskName): $result`n")
-                        $global:outputBox.ScrollToEnd()
-                    })
+                    Log -type "Info" -message "$($job.TaskName): $result"
                 } catch {
-                    $global:outputBox.Dispatcher.Invoke([Action]{
-                        $global:outputBox.AppendText("$($job.TaskName): ERROR - $($_.Exception.Message)`n")
-                        $global:outputBox.ScrollToEnd()
-                    })
+                    Log -type "Error" -message "$($job.TaskName): ERROR - $($_.Exception.Message)"
                 } finally {
                     $job.PowerShell.Dispose()
                     $global:syncHash.Jobs.Remove($job)

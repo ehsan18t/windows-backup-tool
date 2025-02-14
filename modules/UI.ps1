@@ -1,6 +1,22 @@
 Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName System.Drawing
 
+function Show-ConfirmationPopup {
+    param(
+        [string]$Message = "Do you want to proceed?",
+        [string]$Title = "Confirmation"
+    )
+    
+    # Call the static Show method of MessageBox with explicit parameters.
+    $result = [System.Windows.MessageBox]::Show(
+        $Message, 
+        $Title, 
+        [System.Windows.MessageBoxButton]::YesNo, 
+        [System.Windows.MessageBoxImage]::Question
+    )
+    return $result
+}
+
 [xml]$global:xaml = @"
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -122,7 +138,20 @@ Add-Type -AssemblyName System.Drawing
 try {
     $reader = (New-Object System.Xml.XmlNodeReader $global:xaml)
     $global:window = [Windows.Markup.XamlReader]::Load($reader)
+    $global:outputBox = $global:window.FindName("OutputBox")
 } catch {
     Write-Host "XAML Error: $_"
     exit
+}
+
+function Log {
+    param (
+        [string]$type,
+        [string]$message
+    )
+
+    $global:outputBox.Dispatcher.Invoke([Action]{
+        $global:outputBox.AppendText("$($type): $message`n")
+        $global:outputBox.ScrollToEnd()
+    })
 }
