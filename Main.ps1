@@ -99,7 +99,7 @@ $global:startButton.Add_Click({
             if ($job.Handle.IsCompleted -and -not $job.Completed) {
                 try {
                     $result = $job.PowerShell.EndInvoke($job.Handle)
-                    Log-Info "$result"
+                    Log-Success "$result"
                 } catch {
                     Log-Err "$($_.Exception.Message)"
                 } finally {
