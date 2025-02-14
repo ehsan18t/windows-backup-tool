@@ -144,26 +144,26 @@ try {
 }
 
 # --- Logger Thread ---
-$global:OutputQueue = [System.Collections.Concurrent.ConcurrentQueue[string]]::new()
-$global:LogTimer = New-Object System.Windows.Threading.DispatcherTimer
-$global:LogTimer.Interval = [TimeSpan]::FromMilliseconds(500)
+# $global:OutputQueue = [System.Collections.Concurrent.ConcurrentQueue[string]]::new()
+# $global:LogTimer = New-Object System.Windows.Threading.DispatcherTimer
+# $global:LogTimer.Interval = [TimeSpan]::FromMilliseconds(500)
 
-# Add a tick event handler to dequeue and process messages.
-$global:LogTimer.Add_Tick({
-    # Dequeue all messages currently in the queue.
-    $logMsg = $null
-    while ($global:OutputQueue.TryDequeue([ref]$logMsg)) {
-        $global:OutputBox.Dispatcher.Invoke(
-            [Action[string]]{
-                param($msg)
-                Log-Info $msg
-            },
-            [System.Windows.Threading.DispatcherPriority]::Normal,
-            $logMsg
-        )
-    }
-})
-$global:LogTimer.Start()
+# # Add a tick event handler to dequeue and process messages.
+# $global:LogTimer.Add_Tick({
+#     # Dequeue all messages currently in the queue.
+#     $logMsg = $null
+#     while ($global:OutputQueue.TryDequeue([ref]$logMsg)) {
+#         $global:OutputBox.Dispatcher.Invoke(
+#             [Action[string]]{
+#                 param($msg)
+#                 Log-Info $msg
+#             },
+#             [System.Windows.Threading.DispatcherPriority]::Normal,
+#             $logMsg
+#         )
+#     }
+# })
+# $global:LogTimer.Start()
 
 
 # --- Logger Functions ---
@@ -180,8 +180,8 @@ function Convert-Hex {
 function Log-Title {
     param (
         [string]$Message,
-        [string]$BorderColorHex = "#007ACC",  # Default border color: blue
-        [string]$MessageColorHex = "#FFFFFF"    # Default message color: white
+        [string]$BorderColorHex = "#007ACC",
+        [string]$MessageColorHex = "#FFFFFF"
     )
 
     # Use a consistent global variable: $global:OutputBox
