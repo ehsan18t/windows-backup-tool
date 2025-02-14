@@ -28,10 +28,8 @@ function Common {
             $logger.warning("Deleting old backup...")
             if ((Test-Path -Path $constants.backupPath -PathType Leaf)) {
                 Remove-Item -Path $constants.backupPath -Force
-                # $logger.info("Type: File")
             } else {
                 Remove-Item $constants.backupPath -Recurse -Force
-                # $logger.info("Type: Directory")
             }
         }
 
@@ -174,9 +172,28 @@ $tasks = @(
     }
 
     [PSCustomObject]@{
-        Text = "Task 3"
-        BackupAction = { "Task 3..." }
-        RestoreAction = { "Restore task 3..." }
-        Visible = $false
+        Text = "OBS Studio"
+        Constants = @{
+            name = "qBittorrent"
+            process = "qbittorrent"
+            isRunning = (Check-Process "qbittorrent")
+            backupPath = "$baseBackupPath\qBittorrent"
+            executablePath = (Get-InstalledPath "qBittorrent\qbittorrent.exe")
+            localDataPath = "$userProfile\AppData\Local\qBittorrent"
+            roamingDataPath = "$userProfile\AppData\Roaming\qBittorrent"
+        }
+        BackupAction = {
+            param (
+                $constants
+            )
+
+        }
+        RestoreAction = {
+            param (
+                $constants
+            )
+
+        }
+        Visible = $true
     }
 )
