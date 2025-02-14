@@ -11,7 +11,8 @@ $x86PF = [System.Environment]::GetFolderPath("ProgramFilesX86")
 $global:TaskPanelLeft = $global:window.FindName("TaskPanelLeft")
 $global:TaskPanelRight = $global:window.FindName("TaskPanelRight")
 $global:startButton = $global:window.FindName("StartButton")
-$global:outputBox = $global:window.FindName("OutputBox")
+$global:OutputBox.Document.Blocks.Clear()
+$global:OutputBox.Document.PagePadding = [System.Windows.Thickness]::new(0)
 
 # --- Set Up Runspace Pool and Timer ---
 $global:syncHash = [Hashtable]::Synchronized(@{})
@@ -54,7 +55,7 @@ $global:startButton.Add_Click({
     if ($response -eq [System.Windows.MessageBoxResult]::Yes) {
         Remove-Item $backupPath -Recurse -Force
     } elseif ($backExists -and ($response -eq [System.Windows.MessageBoxResult]::No)) {
-        Log -type "Warning" -message "Backup creation cancelled."
+        Log-Warn "Backup creation cancelled."
         $global:startButton.IsEnabled = $true
         return
     }
@@ -98,9 +99,11 @@ $global:startButton.Add_Click({
             if ($job.Handle.IsCompleted -and -not $job.Completed) {
                 try {
                     $result = $job.PowerShell.EndInvoke($job.Handle)
-                    Log -type "Info" -message "$($job.TaskName): $result"
+                    # $global:OutputQueue.Enqueue($result)
+                    Log-Info "$result"
                 } catch {
-                    Log -type "Error" -message "$($job.TaskName): ERROR - $($_.Exception.Message)"
+                    # $global:OutputQueue.Enqueue("Error: $($_.Exception.Message)")
+                    Log-Err "$($_.Exception.Message)"
                 } finally {
                     $job.PowerShell.Dispose()
                     $global:syncHash.Jobs.Remove($job)
@@ -111,10 +114,8 @@ $global:startButton.Add_Click({
         if ($global:syncHash.Jobs.Count -eq 0) {
             $global:timer.Stop()
             $global:startButton.Dispatcher.Invoke([Action]{ $global:startButton.IsEnabled = $true })
-            $global:outputBox.Dispatcher.Invoke([Action]{
-                $global:outputBox.AppendText("All tasks completed!`n")
-                $global:outputBox.ScrollToEnd()
-            })
+            Log-Success "All tasks completed!"
+            # $global:OutputQueue.Enqueue("All tasks completed!")
         }
     })
     $global:timer.Start()
