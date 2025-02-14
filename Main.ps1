@@ -99,10 +99,8 @@ $global:startButton.Add_Click({
             if ($job.Handle.IsCompleted -and -not $job.Completed) {
                 try {
                     $result = $job.PowerShell.EndInvoke($job.Handle)
-                    # $global:OutputQueue.Enqueue($result)
                     Log-Info "$result"
                 } catch {
-                    # $global:OutputQueue.Enqueue("Error: $($_.Exception.Message)")
                     Log-Err "$($_.Exception.Message)"
                 } finally {
                     $job.PowerShell.Dispose()
@@ -115,7 +113,6 @@ $global:startButton.Add_Click({
             $global:timer.Stop()
             $global:startButton.Dispatcher.Invoke([Action]{ $global:startButton.IsEnabled = $true })
             Log-Success "All tasks completed!"
-            # $global:OutputQueue.Enqueue("All tasks completed!")
         }
     })
     $global:timer.Start()

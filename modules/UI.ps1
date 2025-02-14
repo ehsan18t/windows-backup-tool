@@ -192,7 +192,7 @@ function Log-Title {
     $messageBrush = New-Object System.Windows.Media.SolidColorBrush $messageColor
 
     # Compute inner width: add 2 for padding (one space on each side)
-    $innerWidth = $Message.Length + 2
+    $innerWidth = $Message.Length
 
     # Define box-drawing characters using Unicode code points.
     $topLeft     = [char]0x2554  # ╔
@@ -203,8 +203,8 @@ function Log-Title {
     $bottomRight = [char]0x255D  # ╝
 
     # Create the top and bottom lines (adjusting the inner width as needed).
-    $topLine    = "$topLeft" + ([string]::new($horizontal, $innerWidth - 2)) + "$topRight"
-    $bottomLine = "$bottomLeft" + ([string]::new($horizontal, $innerWidth - 2)) + "$bottomRight"
+    $topLine    = "$topLeft" + ([string]::new($horizontal, $innerWidth)) + "$topRight"
+    $bottomLine = "$bottomLeft" + ([string]::new($horizontal, $innerWidth)) + "$bottomRight"
 
     # Build the middle line in three parts:
     $leftRunText  = "$vertical "   # left border + space
