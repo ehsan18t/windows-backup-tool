@@ -1,3 +1,5 @@
 @ECHO OFF
 TITLE Windows Backup Tool Runner
-PowerShell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File "app.ps1"
+PowerShell -NoProfile -ExecutionPolicy Bypass -File "Compile.ps1"
+PowerShell -WindowStyle Hidden -NoProfile -ExecutionPolicy Bypass -File "App.ps1"
+DEL "App.ps1"
